@@ -299,7 +299,7 @@
                         <a href="mailto:chilakapatirakesh9@gmail.com" class="text-cyber-lightGray hover:text-cyber-cyan hover:scale-110 transition-all" title="Direct SMTP Transmission">
                             <i class="fa-solid fa-envelope"></i>
                         </a>
-                        <button onclick="downloadResume()" class="ml-2 font-mono text-[10px] sm:text-xs px-3 py-1.5 border border-cyber-green/30 text-cyber-green rounded hover:bg-cyber-green/10 hover:border-cyber-green transition-all flex items-center space-x-1.5">
+                        <button onclick="downloadResume()" class="ml-2 font-mono text-[10px] sm:text-xs px-3 py-1.5 border border-cyber-green/30 text-cyber-green rounded hover:bg-cyber-green/10 hover:border-cyber-green transition-all flex items-center space-x-1.5" title="Decrypted Resume Package">
                             <i class="fa-solid fa-file-invoice animate-bounce"></i>
                             <span>GET_RESUME.PDF</span>
                         </button>
@@ -1540,7 +1540,7 @@
             }, 350);
         }
 
-        // Simulated resume trigger download
+        // Simulated resume trigger download using verified uploaded resume content
         function downloadResume() {
             const terminalScreen = document.getElementById('terminal-screen');
             const log = document.createElement('div');
@@ -1549,20 +1549,139 @@
                 <p class="text-white">agent@chilakapati_sec:~$ get rakesh_chilakapati_resume.pdf</p>
                 <p class="text-cyber-green">> Checking file credentials integrity...</p>
                 <p class="text-cyber-green">> Processing decryption envelopes...</p>
-                <p class="text-cyber-green">> Outflow stream generated. (Size: 195KB)</p>
+                <p class="text-cyber-green">> Outflow stream generated. (Size: 240KB)</p>
             `;
             terminalHistory.appendChild(log);
             terminalScreen.scrollTop = terminalScreen.scrollHeight;
 
             document.getElementById('hero').scrollIntoView({ behavior: 'smooth' });
 
-            // Simulating real PDF trigger blob download
-            const mockContent = "Rakesh Chilakapati - Cybersecurity Analyst Profile Document Placeholder.";
-            const blob = new Blob([mockContent], { type: "text/plain" });
+            // Beautifully formatted formal ASCII structure containing Rakesh Chilakapati's verified resume
+            const verifiedResume = `================================================================================
+                           RAKESH CHILAKAPATI
+                         CYBERSECURITY ANALYST
+================================================================================
+Contact Details:
+----------------
+Phone:      +91 9492488866
+Email:      chilakapatirakesh9@gmail.com
+LinkedIn:   https://www.linkedin.com/in/rakeshchilakapati/
+GitHub:     https://github.com/RakeshChilakapati2000
+Location:   Hyderabad, India
+
+--------------------------------------------------------------------------------
+SUMMARY
+--------------------------------------------------------------------------------
+Dedicated and highly rigorous Cybersecurity Analyst with practical operational
+competencies spanning SOC Operations, Application Security, Threat Hunting, and
+Incident Investigation. Equipped with deep familiarity with cloud-hosted directories,
+and hands-on expertise with Microsoft Defender XDR and constructing analytical
+threat telemetry models inside Microsoft Sentinel using KQL (Kusto Query Language).
+Skilled in detecting vulnerabilities, performing vulnerability assessments, and
+conducting penetration testing (VAPT) methodologies. Passionate about threat
+detection, adversary simulation, and security research.
+
+--------------------------------------------------------------------------------
+PROFESSIONAL EXPERIENCE
+--------------------------------------------------------------------------------
+Cybersecurity Analyst | Mindexor Pvt Ltd
+Dec 2025 - Present | Hyderabad, India
+* Investigate and respond to security incidents using Microsoft Defender XDR and
+  Microsoft Sentinel across endpoint, identity, and cloud environments.
+* Conduct threat hunting activities using KQL queries to identify suspicious
+  authentication attempts, anomalous user behavior, phishing incidents, and
+  potential indicators of compromise (IOCs).
+* Perform security monitoring and alert investigations to analyze potential
+  security threats and suspicious activities within enterprise environments.
+* Support both Application Security assessments and Security Operations Center (SOC)
+  operations as part of enterprise cybersecurity activities.
+
+Systems Engineer | Tata Consultancy Services (TCS)
+Mar 2022 - Aug 2025 | Hyderabad, India
+* Performed Vulnerability Assessment and Penetration Testing (VAPT) activities
+  focused on OWASP Top 10 vulnerabilities, including authentication flaws,
+  session management weaknesses, SQL Injection (SQLi), and Cross-Site Scripting (XSS).
+* Conducted security testing of web applications and APIs using tools such as
+  Burp Suite, Nmap, and SQLMap for reconnaissance, vulnerability analysis, and
+  penetration testing activities.
+* Reviewed vulnerability assessment reports and supported remediation validation
+  processes to improve application security posture.
+
+--------------------------------------------------------------------------------
+PROJECTS
+--------------------------------------------------------------------------------
+Full Stack Breach Lab – Vulnerable Environment Design & Attack Simulation
+April 2025
+* Designed and developed a custom vulnerable lab environment titled "Full Stack
+  Breach Lab" to simulate real-world attack scenarios.
+* Engineered intentional vulnerabilities across web application and network layers
+  to replicate common security weaknesses.
+* Structured multi-stage attack paths covering reconnaissance, exploitation,
+  and privilege escalation to root access.
+* Implemented CTF-style flags and insecure service configurations to enable
+  hands-on attack simulation and validation.
+
+Sri Ramana Printers – Static Business Website
+Jan 2023
+* Developed a responsive static business website for Sri Ramana Printers to
+  showcase printing services and business information.
+* Designed the user interface using HTML and CSS, leveraging Bootstrap for
+  responsive layout and styling.
+* Structured the website to present services, contact details, and business
+  offerings in a clean and user-friendly manner.
+* Deployed the project using GitHub Pages to provide an online presence.
+
+--------------------------------------------------------------------------------
+SKILLS
+--------------------------------------------------------------------------------
+1.  Application Security
+2.  Vulnerability Assessment & Penetration Testing (VAPT)
+3.  Vulnerability Management
+4.  SIEM, SOAR
+5.  Burp Suite
+6.  Nmap
+7.  Microsoft Defender XDR
+8.  Microsoft Sentinel
+9.  Kusto Query Language (KQL)
+10. Threat Hunting
+11. IDS/IPS
+
+--------------------------------------------------------------------------------
+EDUCATION
+--------------------------------------------------------------------------------
+B.Tech – Computer Science Engineering (2017 - 2021)
+Koneru Lakshmaiah College of Engineering
+
+Intermediate – MPC (2015 - 2017)
+Sri Chaitanya
+
+Schooling – CBSE (2003 - 2015)
+V. S. St. John’s Higher Secondary School
+
+--------------------------------------------------------------------------------
+ADDITIONAL INFORMATION & CERTIFICATIONS
+--------------------------------------------------------------------------------
+* Certifications: SC-200: Microsoft Security Operations Analyst
+* Languages:      Telugu (Native), English (Professional), Spanish, German
+* Accomplishments:
+  - Actively developing expertise in Threat Hunting and Detection Engineering
+    using Microsoft Sentinel and KQL.
+  - Building hands-on cybersecurity labs to simulate real-world attack, detection,
+    and incident response scenarios.
+  - Achieved Top 1% ranking on TryHackMe through practical cybersecurity challenges.
+* Interests:
+  - Building Security Labs and Attack Simulations
+  - Capture The Flag (CTF) Challenges
+  - Cybersecurity Research and Vulnerability Analysis
+  - Exploring Penetration Testing Methodologies
+================================================================================`;
+
+            // Deliver the file payload cleanly to the client
+            const blob = new Blob([verifiedResume], { type: "text/plain;charset=utf-8" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "rakesh_chilakapati_resume.pdf";
+            a.download = "Rakesh_Chilakapati_Cybersecurity_Analyst_Resume.txt";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
