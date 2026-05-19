@@ -1546,7 +1546,7 @@
             const log = document.createElement('div');
             log.className = 'mt-3 font-mono text-xs text-cyber-cyan';
             log.innerHTML = `
-                <p class="text-white">agent@chilakapati_sec:~$ get rakesh_chilakapati_resume.txt</p>
+                <p class="text-white">agent@chilakapati_sec:~$ get rakesh_chilakapati_resume.pdf</p>
                 <p class="text-cyber-green">> Checking file credentials integrity...</p>
                 <p class="text-cyber-green">> Processing decryption envelopes...</p>
                 <p class="text-cyber-green">> Outflow stream generated. (Size: 240KB)</p>
@@ -1681,7 +1681,7 @@ ADDITIONAL INFORMATION & CERTIFICATIONS
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "Rakesh_Chilakapati_Cybersecurity_Analyst_Resume.pdf";
+            a.download = "Rakesh_Chilakapati_Cybersecurity_Analyst_Resume.txt";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
