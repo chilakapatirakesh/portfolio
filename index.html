@@ -3,134 +3,805 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rakesh Chilakapati // SOC Operations Dashboard</title>
+    <title>R. CHILAKAPATI // NEURAL IDENT</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgDark: '#050816',
+                        bgDarker: '#0A0F1F',
+                        bgPanel: '#111827',
+                        electricCyan: '#00F5FF',
+                        neonPurple: '#B026FF',
+                        neonPink: '#FF2D95',
+                        limeGreen: '#00FF88',
+                    },
+                    fontFamily: {
+                        header: ['Orbitron', 'sans-serif'],
+                        body: ['Rajdhani', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'cyber-grid': 'linear-gradient(to right, rgba(0, 245, 255, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 245, 255, 0.05) 1px, transparent 1px)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for Glow, Glitch, and Animations -->
     <style>
         :root {
-            --neon-cyan: #00f2ff;
-            --bg-dark: #05080f;
-            --panel-bg: rgba(10, 15, 25, 0.8);
+            --cyan: #00F5FF;
+            --purple: #B026FF;
+            --pink: #FF2D95;
+            --green: #00FF88;
         }
+
         body {
-            background-color: var(--bg-dark);
-            color: #d1d5db;
-            font-family: 'Share Tech Mono', monospace;
+            background-color: #050816;
+            color: #e5e7eb;
+            overflow-x: hidden;
+            cursor: none; /* Custom cursor */
         }
-        .text-cyan { color: var(--neon-cyan); }
-        .border-cyan { border: 1px solid var(--neon-cyan); }
-        .panel {
-            background: var(--panel-bg);
-            border: 1px solid rgba(0, 242, 255, 0.2);
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0A0F1F; }
+        ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 4px; box-shadow: 0 0 10px var(--cyan); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--pink); }
+
+        /* Custom Cursor */
+        .cursor-dot {
+            position: fixed; width: 6px; height: 6px; background: var(--cyan);
+            border-radius: 50%; pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background 0.2s;
+            box-shadow: 0 0 10px var(--cyan);
         }
-        /* Grid background effect */
-        .grid-bg {
-            background-image: radial-gradient(var(--neon-cyan) 0.5px, transparent 0.5px);
-            background-size: 30px 30px;
-            opacity: 0.1;
+        .cursor-outline {
+            position: fixed; width: 30px; height: 30px; border: 1px solid var(--cyan);
+            border-radius: 50%; pointer-events: none; z-index: 9998;
+            transform: translate(-50%, -50%); transition: 0.1s ease-out;
+        }
+        .hover-target:hover ~ .cursor-dot { width: 12px; height: 12px; background: var(--pink); box-shadow: 0 0 15px var(--pink); }
+        .hover-target:hover ~ .cursor-outline { border-color: var(--pink); transform: translate(-50%, -50%) scale(1.5); }
+
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 245, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-panel::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(0, 245, 255, 0.1), transparent);
+            transform: skewX(-20deg); transition: 0.5s;
+        }
+        .glass-panel:hover::before { left: 150%; }
+        
+        .glass-panel:hover {
+            border-color: rgba(0, 245, 255, 0.6);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.2), inset 0 0 10px rgba(0, 245, 255, 0.1);
+        }
+
+        .neon-text-cyan { text-shadow: 0 0 5px var(--cyan), 0 0 10px var(--cyan), 0 0 20px rgba(0, 245, 255, 0.5); }
+        .neon-text-pink { text-shadow: 0 0 5px var(--pink), 0 0 10px var(--pink); }
+        
+        .border-glow-cyan { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0, 245, 255, 0.5), inset 0 0 5px rgba(0, 245, 255, 0.3); }
+
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background-size: 100% 4px; pointer-events: none; z-index: 50; opacity: 0.3;
+        }
+
+        /* Glitch Effect */
+        .glitch-wrapper { position: relative; display: inline-block; }
+        .glitch { position: relative; color: white; z-index: 1; }
+        .glitch::before, .glitch::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #050816; z-index: -1;
+        }
+        .glitch::before {
+            left: 2px; text-shadow: -1px 0 var(--pink); animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: -2px; text-shadow: -1px 0 var(--cyan); animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(20% 0 80% 0); }
+            20% { clip-path: inset(60% 0 10% 0); }
+            40% { clip-path: inset(40% 0 50% 0); }
+            60% { clip-path: inset(80% 0 5% 0); }
+            80% { clip-path: inset(10% 0 70% 0); }
+            100% { clip-path: inset(30% 0 20% 0); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(10% 0 60% 0); }
+            20% { clip-path: inset(30% 0 20% 0); }
+            40% { clip-path: inset(70% 0 10% 0); }
+            60% { clip-path: inset(20% 0 50% 0); }
+            80% { clip-path: inset(90% 0 5% 0); }
+            100% { clip-path: inset(40% 0 30% 0); }
+        }
+
+        /* Reveal Animations */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Neural Node specific */
+        .node-link { stroke: rgba(0, 245, 255, 0.2); stroke-width: 2; transition: stroke 0.3s; }
+        .node-link:hover { stroke: var(--pink); stroke-width: 4; }
+        
+        .floating { animation: float 6s ease-in-out infinite; }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed; inset: 0; background: #050816; z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease;
         }
     </style>
 </head>
-<body class="selection:bg-cyan-900 selection:text-white">
-    <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-cyan/30">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap justify-between items-center text-xs">
-            <span class="text-cyan font-bold tracking-widest">[R. CHILAKAPATI // SOC AGENT STABLE]</span>
-            <div class="flex space-x-6 text-gray-400">
-                <a href="#hero" class="hover:text-cyan">01. // SYSTEM_DECK</a>
-                <a href="#summary" class="hover:text-cyan">02. // DOSSIER</a>
-                <a href="#experience" class="hover:text-cyan">03. // WORK_LOGS</a>
-                <a href="#projects" class="hover:text-cyan">04. // ARSENAL</a>
-                <a href="#skills" class="hover:text-cyan">05. // MATRIX</a>
+<body class="bg-bgDark font-body text-gray-300 antialiased selection:bg-electricCyan selection:text-black">
+
+    <!-- Boot Loader -->
+    <div id="loader">
+        <div class="font-mono text-electricCyan text-sm md:text-base space-y-2 w-full max-w-lg px-6" id="boot-text">
+            <p>> INITIALIZING NEURAL UPLINK...</p>
+        </div>
+        <div class="w-full max-w-lg px-6 mt-4">
+            <div class="h-1 w-full bg-gray-800 rounded overflow-hidden">
+                <div id="boot-progress" class="h-full bg-electricCyan w-0 transition-all duration-75"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- UI Overlays -->
+    <div class="scanlines"></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+    
+    <!-- Ambient Particle Canvas -->
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+    
+    <!-- Grid Background -->
+    <div class="fixed inset-0 bg-cyber-grid bg-[length:40px_40px] pointer-events-none z-0"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-40 bg-bgDark/80 backdrop-blur-md border-b border-electricCyan/20">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="font-header text-electricCyan font-bold tracking-widest text-lg hover-target">
+                SYS_IDENT: <span class="text-white">R.CHILAKAPATI</span>
+            </div>
+            <div class="hidden md:flex space-x-8 font-mono text-xs uppercase tracking-widest">
+                <a href="#hero" class="hover:text-electricCyan hover:neon-text-cyan transition-all hover-target">01. Uplink</a>
+                <a href="#dossier" class="hover:text-electricCyan hover:neon-text-cyan transition-all hover-target">02. Dossier</a>
+                <a href="#matrix" class="hover:text-neonPink hover:neon-text-pink transition-all hover-target">03. Neural_Matrix</a>
+                <a href="#logs" class="hover:text-electricCyan hover:neon-text-cyan transition-all hover-target">04. Operations</a>
+                <a href="#arsenal" class="hover:text-electricCyan hover:neon-text-cyan transition-all hover-target">05. Arsenal</a>
+            </div>
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden text-electricCyan hover-target">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
         </div>
     </nav>
 
-    <main id="hero" class="pt-32 pb-20 px-6 max-w-7xl mx-auto grid lg:grid-cols-2 gap-12">
-        <div class="space-y-6">
-            <div class="text-cyan text-sm animate-pulse">// SYSTEM AGENT ACCESS PERMITTED</div>
-            <h1 class="text-6xl font-bold text-white tracking-tighter">RAKESH<br>CHILAKAPATI</h1>
-            <p class="text-xl text-gray-300">Security Analyst | Incident Response | AI-Augmented Defense</p>
-            <div class="flex gap-4">
-                <a href="mailto:chilakapatirakesh9@gmail.com" class="px-6 py-2 border border-cyan text-cyan hover:bg-cyan hover:text-black transition">ESTABLISH_SECURE_LINK</a>
+    <!-- 1. Landing Hero -->
+    <main id="hero" class="relative z-10 min-h-screen flex items-center justify-center pt-20 px-6">
+        <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
+            <!-- Left Text Content -->
+            <div class="space-y-6">
+                <div class="inline-block px-3 py-1 border border-electricCyan/50 bg-electricCyan/10 text-electricCyan font-mono text-xs mb-4 rounded">
+                    <span class="animate-pulse mr-2 w-2 h-2 inline-block bg-electricCyan rounded-full"></span>
+                    SECURE CONNECTION ESTABLISHED
+                </div>
+                
+                <h1 class="font-header text-5xl md:text-7xl font-bold text-white tracking-tight uppercase leading-tight glitch-wrapper">
+                    <span class="glitch" data-text="Rakesh">Rakesh</span><br>
+                    <span class="text-electricCyan neon-text-cyan">Chilakapati</span>
+                </h1>
+                
+                <div class="font-mono text-lg md:text-xl text-gray-400 h-8" id="typewriter-container">
+                    > <span id="typewriter" class="text-neonPink"></span><span class="animate-pulse">_</span>
+                </div>
+                
+                <p class="font-body text-lg text-gray-400 max-w-lg leading-relaxed mt-4">
+                    Orchestrating the deployment of advanced security solutions. Defending digital infrastructure against apex threats through AI-augmented telemetry, zero-trust architecture, and proactive incident neutralization.
+                </p>
+                
+                <div class="flex flex-wrap gap-4 pt-6">
+                    <a href="#logs" class="hover-target px-8 py-3 bg-electricCyan/10 border border-electricCyan text-electricCyan font-header uppercase tracking-wider hover:bg-electricCyan hover:text-bgDark transition-all duration-300 shadow-[0_0_15px_rgba(0,245,255,0.2)] hover:shadow-[0_0_30px_rgba(0,245,255,0.6)]">
+                        Access Ops Logs
+                    </a>
+                    <a href="#contact" class="hover-target px-8 py-3 border border-gray-600 text-gray-300 font-header uppercase tracking-wider hover:border-neonPink hover:text-neonPink transition-all duration-300">
+                        Initiate Comms
+                    </a>
+                </div>
             </div>
-        </div>
-        
-        <!-- Terminal Window mimic -->
-        <div class="panel p-6 border-cyan/40">
-            <div class="flex items-center gap-2 mb-4 border-b border-cyan/20 pb-4">
-                <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                <span class="ml-2 text-xs text-gray-500">// DIAGNOSTIC_OPS_SHELL.sh</span>
-            </div>
-            <div class="space-y-2 text-sm text-cyan/90">
-                <p>> STATUS: ACTIVE</p>
-                <p>> SUPERVISOR: RAKESH_CHILAKAPATI</p>
-                <p>> ROLE: SECURITY_OPERATIONS_ANALYST</p>
-                <p>> SYSTEM: 24*7 SOC MONITORING_ENABLED</p>
-                <p>> MISSION: DEFENDING_DIGITAL_SYSTEMS_THROUGH_SECURITY_DETECTION_INNOVATION</p>
-                <div class="mt-4 border-t border-cyan/20 pt-4 text-white">
-                    agent@chilakapati_sec:~$ ENTER_DIAGNOSTIC_DIRECTIVES...
+
+            <!-- Right Visual / Avatar Area -->
+            <div class="relative w-full aspect-square max-w-md mx-auto hidden lg:block">
+                <!-- Holographic Rings -->
+                <div class="absolute inset-0 border border-electricCyan/20 rounded-full animate-[spin_10s_linear_infinite]"></div>
+                <div class="absolute inset-4 border border-dashed border-neonPink/30 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
+                <div class="absolute inset-8 border border-electricCyan/10 rounded-full animate-[spin_8s_linear_infinite]"></div>
+                
+                <!-- Core Graphic -->
+                <div class="absolute inset-12 bg-bgPanel rounded-full border border-electricCyan/40 flex items-center justify-center overflow-hidden shadow-[0_0_50px_rgba(0,245,255,0.1)] hover:shadow-[0_0_80px_rgba(0,245,255,0.3)] transition-shadow duration-500">
+                    <div class="absolute inset-0 bg-gradient-radial from-electricCyan/10 to-transparent"></div>
+                    <!-- Cybersecurity Symbol representation -->
+                    <svg class="w-32 h-32 text-electricCyan/80 floating" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path>
+                    </svg>
+                </div>
+
+                <!-- Floating Data Badges -->
+                <div class="absolute top-10 -right-4 glass-panel px-4 py-2 rounded font-mono text-xs text-limeGreen border-limeGreen/30 floating" style="animation-delay: 1s;">
+                    STATUS: SECURE
+                </div>
+                <div class="absolute bottom-20 -left-8 glass-panel px-4 py-2 rounded font-mono text-xs text-neonPurple border-neonPurple/30 floating" style="animation-delay: 2s;">
+                    THREAT LVL: 0%
                 </div>
             </div>
         </div>
     </main>
 
-    <section id="summary" class="py-20 px-6 max-w-7xl mx-auto grid md:grid-cols-2 gap-8">
-        <div class="panel p-8">
-            <h3 class="text-xl text-cyan mb-6">// CAREER_OBJECTIVE</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">Seasoned and credentialed security engineer with 3.5 years of specialized experience in security operations, incident response, vulnerability management, DevSecOps, and cloud security. Demonstrated proficiency in safeguarding digital infrastructure, leading the resolution of security incidents, and orchestrating the deployment of advanced security solutions.</p>
-        </div>
-        <div class="panel p-8">
-            <h3 class="text-xl text-cyan mb-6">// PROFESSIONAL_SUMMARY</h3>
-            <ul class="text-gray-400 text-sm space-y-3">
-                <li>• 3.5 years of hand-on IT Experience in securing enterprise network environments.</li>
-                <li>• Worked in a 24*7 Security Operations Center (SOC), monitoring and responding to security incidents.</li>
-                <li>• Continuous monitoring of SIEM events to detect, analyze and prevent intrusion attempts.</li>
-                <li>• Strong knowledge of Incident Response Management and security frameworks.</li>
-            </ul>
-        </div>
-    </section>
+    <!-- 2. About Me (Dossier) -->
+    <section id="dossier" class="relative z-10 py-24 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-header text-3xl md:text-4xl text-white mb-12 flex items-center reveal">
+                <span class="text-electricCyan mr-4">02 //</span> SYSTEM DOSSIER
+                <div class="flex-grow h-[1px] bg-gradient-to-r from-electricCyan/40 to-transparent ml-6"></div>
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 reveal">
+                <!-- Mission Statement -->
+                <div class="glass-panel p-8 rounded-lg">
+                    <div class="flex items-center gap-3 mb-6 border-b border-electricCyan/20 pb-4">
+                        <div class="w-2 h-2 bg-neonPink rounded-full animate-pulse"></div>
+                        <h3 class="font-mono text-electricCyan text-sm uppercase tracking-widest">Primary Directive</h3>
+                    </div>
+                    <p class="font-body text-lg text-gray-300 leading-relaxed mb-6">
+                        Seasoned and credentialed Security Engineer with <span class="text-white font-bold">3.5 years</span> of specialized deployment in hostile digital environments. Proven capability in Security Operations Centers (SOC), rapid incident response, vulnerability management, and cloud architecture defense.
+                    </p>
+                    <p class="font-body text-lg text-gray-300 leading-relaxed">
+                        My vision is to bridge the gap between human analytical intuition and machine-speed threat actors by pioneering <span class="text-limeGreen font-bold">AI-Augmented Security Operations</span>. I don't just monitor logs; I build the intelligence architectures that hunt threats autonomously.
+                    </p>
+                </div>
 
-    <section id="experience" class="py-20 px-6 max-w-7xl mx-auto">
-        <h2 class="text-3xl text-white mb-12">// WORK_LOGS // TATA_CONSULTANCY_SERVICES</h2>
-        <div class="panel p-8">
-            <div class="flex justify-between items-start mb-6 border-b border-cyan/20 pb-6">
-                <div>
-                    <h4 class="text-2xl text-cyan">Security Engineer</h4>
-                    <p class="text-gray-500">MARCH 2022 – AUGUST 2025</p>
+                <!-- Core Stats -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-panel p-6 rounded-lg flex flex-col justify-center border-l-2 border-l-electricCyan">
+                        <span class="font-mono text-4xl text-white font-bold neon-text-cyan mb-2">24/7</span>
+                        <span class="font-mono text-xs text-gray-400 uppercase tracking-widest">SOC Monitoring Exp</span>
+                    </div>
+                    <div class="glass-panel p-6 rounded-lg flex flex-col justify-center border-l-2 border-l-neonPink">
+                        <span class="font-mono text-4xl text-white font-bold neon-text-pink mb-2">3.5</span>
+                        <span class="font-mono text-xs text-gray-400 uppercase tracking-widest">Years Active Duty</span>
+                    </div>
+                    <div class="glass-panel p-6 rounded-lg flex flex-col justify-center col-span-2 border-l-2 border-l-limeGreen">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <span class="font-mono text-xl text-white block mb-1">CEH v13</span>
+                                <span class="font-mono text-xs text-gray-400 uppercase tracking-widest">EC-Council Certified</span>
+                            </div>
+                            <svg class="w-8 h-8 text-limeGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <ul class="text-gray-300 text-sm space-y-3">
-                <li>• Performing incident reporting and incident management for security alters triggered by SIEM platforms.</li>
-                <li>• Conducting log monitoring and incident analysis across multiple devices including firewalls, IDS, IPS, windows servers, web servers, antivirus, EDR, and WAF.</li>
-                <li>• Creating and managing saved searches and preparing daily operational security reports.</li>
-                <li>• Identifying indicators of compromise (IOCs) by correlating application, network, and host-based security logs, and determining appropriate remediation actions.</li>
-                <li>• Proactively monitoring customer environments on a 24*7 basis and providing regular updates in accordance with committed SLAs.</li>
-            </ul>
         </div>
     </section>
 
-    <section id="projects" class="py-20 px-6 max-w-7xl mx-auto">
-        <h2 class="text-3xl text-white mb-12">// ARSENAL // SECURITY_PROJECTS</h2>
-        <div class="panel p-8 border-l-4 border-cyan">
-            <h4 class="text-2xl text-white mb-2">AegisSOC: AI-Augmented Security Operations Center</h4>
-            <p class="text-cyan text-xs mb-6 uppercase tracking-widest">Technologies: Wazuh, Suricata, LangGraph, ChromaDB, Ollama, TheHive</p>
-            <div class="grid md:grid-cols-2 gap-6 text-gray-400 text-sm">
-                <p>Designed and deployed a multi-tier SOC architecture integrating SIEM, IDS/IPS, Endpoint Monitoring, Threat Intelligence, and AI-assisted automation.</p>
-                <p>Built an AI-assisted alert triage and investigation framework using RAG techniques to automate security event analysis and threat correlation.</p>
+    <!-- 3. Skills Matrix -->
+    <section id="matrix" class="relative z-10 py-24 px-6 border-t border-white/5 bg-gradient-to-b from-transparent to-bgDarker">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-header text-3xl md:text-4xl text-white mb-12 flex items-center justify-end text-right reveal">
+                <div class="flex-grow h-[1px] bg-gradient-to-l from-neonPink/40 to-transparent mr-6"></div>
+                NEURAL_MATRIX <span class="text-neonPink ml-4">// 03</span>
+            </h2>
+
+            <!-- Interactive Capability Dashboard -->
+            <div class="grid lg:grid-cols-3 gap-8 reveal">
+                
+                <!-- Category 1: SIEM & Monitoring -->
+                <div class="glass-panel p-6 rounded-xl group hover:border-electricCyan transition-colors">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded bg-electricCyan/10 flex items-center justify-center border border-electricCyan/30 group-hover:border-electricCyan">
+                            <svg class="w-6 h-6 text-electricCyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </div>
+                        <h3 class="font-header text-xl text-white">SIEM & EDR</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2 font-mono text-sm">
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-electricCyan hover:text-electricCyan cursor-default transition-colors">Splunk</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-electricCyan hover:text-electricCyan cursor-default transition-colors">MS Azure Sentinel</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-electricCyan hover:text-electricCyan cursor-default transition-colors">IBM QRadar</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-electricCyan hover:text-electricCyan cursor-default transition-colors">Wazuh SIEM</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-electricCyan hover:text-electricCyan cursor-default transition-colors">CrowdStrike</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-electricCyan hover:text-electricCyan cursor-default transition-colors">Defender XDR</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-electricCyan hover:text-electricCyan cursor-default transition-colors">Sysmon</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-electricCyan hover:text-electricCyan cursor-default transition-colors">Velociraptor</span>
+                    </div>
+                </div>
+
+                <!-- Category 2: AI & Security Eng -->
+                <div class="glass-panel p-6 rounded-xl group hover:border-neonPurple transition-colors lg:transform lg:-translate-y-4">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded bg-neonPurple/10 flex items-center justify-center border border-neonPurple/30 group-hover:border-neonPurple">
+                            <svg class="w-6 h-6 text-neonPurple" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                        </div>
+                        <h3 class="font-header text-xl text-white">AI & Sec Eng</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2 font-mono text-sm">
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-neonPurple hover:text-neonPurple cursor-default transition-colors">Ollama</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-neonPurple hover:text-neonPurple cursor-default transition-colors">LangGraph</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-neonPurple hover:text-neonPurple cursor-default transition-colors">ChromaDB</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-neonPurple hover:text-neonPurple cursor-default transition-colors">RAG Tech</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-neonPurple hover:text-neonPurple cursor-default transition-colors">LLM Alert Analysis</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-neonPurple hover:text-neonPurple cursor-default transition-colors">Automation Workflows</span>
+                    </div>
+                </div>
+
+                <!-- Category 3: SOC & Network -->
+                <div class="glass-panel p-6 rounded-xl group hover:border-limeGreen transition-colors">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded bg-limeGreen/10 flex items-center justify-center border border-limeGreen/30 group-hover:border-limeGreen">
+                            <svg class="w-6 h-6 text-limeGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                        </div>
+                        <h3 class="font-header text-xl text-white">Network & Forensics</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2 font-mono text-sm">
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-limeGreen hover:text-limeGreen cursor-default transition-colors">Suricata IDS</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-limeGreen hover:text-limeGreen cursor-default transition-colors">Zeek NM</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-limeGreen hover:text-limeGreen cursor-default transition-colors">Incident Response</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-limeGreen hover:text-limeGreen cursor-default transition-colors">MITRE ATT&CK</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-limeGreen hover:text-limeGreen cursor-default transition-colors">Digital Forensics</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-limeGreen hover:text-limeGreen cursor-default transition-colors">Threat Hunting</span>
+                        <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-gray-300 hover:border-limeGreen hover:text-limeGreen cursor-default transition-colors">Vulnerability Mgmt</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- System Stats Readout -->
+            <div class="mt-12 flex flex-wrap justify-center gap-8 font-mono text-xs text-gray-500 reveal">
+                <div class="flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 bg-electricCyan rounded-full animate-ping"></div>
+                    <span>TICKETING: ServiceNow, Jira, Summit AI, TheHive</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 bg-neonPink rounded-full animate-ping" style="animation-delay: 0.5s;"></div>
+                    <span>CLOUD: MS Azure, AWS</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 bg-limeGreen rounded-full animate-ping" style="animation-delay: 1s;"></div>
+                    <span>SCANNING: Nessus, Qualys</span>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer class="py-10 text-center border-t border-cyan/20 mt-20">
-        <p class="text-cyan text-xs">// SYSTEM_VER_1.0 // RAKESH CHILAKAPATI // 2026</p>
+    <!-- 4. Experience Timeline -->
+    <section id="logs" class="relative z-10 py-24 px-6 border-t border-white/5">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-header text-3xl md:text-4xl text-white mb-16 flex items-center reveal">
+                <span class="text-electricCyan mr-4">04 //</span> DEPLOYMENT LOGS
+                <div class="flex-grow h-[1px] bg-gradient-to-r from-electricCyan/40 to-transparent ml-6"></div>
+            </h2>
+
+            <div class="relative border-l border-electricCyan/30 pl-8 ml-4 md:ml-0 space-y-16 reveal">
+                
+                <!-- Experience Item 1 -->
+                <div class="relative group">
+                    <!-- Timeline Node -->
+                    <div class="absolute -left-[41px] top-1 w-5 h-5 bg-bgDark border-2 border-electricCyan rounded-full group-hover:bg-electricCyan group-hover:shadow-[0_0_15px_#00F5FF] transition-all duration-300"></div>
+                    
+                    <div class="glass-panel p-8 rounded-xl border border-white/5 group-hover:border-electricCyan/50 transition-colors">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
+                            <div>
+                                <h3 class="font-header text-2xl text-white group-hover:text-electricCyan transition-colors">Security Engineer</h3>
+                                <div class="font-mono text-sm text-neonPurple mt-1">TATA CONSULTANCY SERVICES</div>
+                            </div>
+                            <div class="font-mono text-xs bg-white/5 px-3 py-1 rounded text-gray-400 border border-white/10 inline-block w-max">
+                                MAR 2022 - AUG 2025
+                            </div>
+                        </div>
+                        
+                        <ul class="font-body text-gray-300 space-y-3 mt-6">
+                            <li class="flex items-start">
+                                <span class="text-electricCyan mr-2 mt-1 font-mono">></span>
+                                <span>Operated within a 24*7 Security Operations Center (SOC), architecting the monitoring and analysis of telemetry from diverse security/industrial appliances via SIEM platforms.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-electricCyan mr-2 mt-1 font-mono">></span>
+                                <span>Executed rapid incident reporting and management for alerts triggered across firewalls, IDS/IPS, Windows/Web servers, EDR, and WAF environments.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-electricCyan mr-2 mt-1 font-mono">></span>
+                                <span>Extracted and analyzed Indicators of Compromise (IOCs) through deep correlation of application, network, and host-based security logs to dictate remediation actions.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-electricCyan mr-2 mt-1 font-mono">></span>
+                                <span>Spearheaded the optimization of SOC processes, significantly enhancing incident response SLAs and overall triage efficiency.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-electricCyan mr-2 mt-1 font-mono">></span>
+                                <span>Maintained systemic uptime by monitoring device/interface availability to minimize critical log loss.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Education Node embedded in timeline for clean UI -->
+                <div class="relative group">
+                    <div class="absolute -left-[41px] top-1 w-5 h-5 bg-bgDark border-2 border-gray-600 rounded-full group-hover:border-limeGreen group-hover:bg-limeGreen/20 transition-all duration-300"></div>
+                    
+                    <div class="glass-panel p-6 rounded-xl border border-white/5 group-hover:border-limeGreen/50 transition-colors">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
+                            <div>
+                                <h3 class="font-header text-xl text-gray-300 group-hover:text-white transition-colors">B.Tech - Computer Science</h3>
+                                <div class="font-mono text-sm text-limeGreen mt-1">K L UNIVERSITY</div>
+                            </div>
+                            <div class="font-mono text-xs text-gray-500">
+                                GRADUATED: 2021
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Projects Command Center -->
+    <section id="arsenal" class="relative z-10 py-24 px-6 border-t border-white/5 bg-bgDarker">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="font-header text-3xl md:text-4xl text-white mb-4 flex items-center justify-end text-right reveal">
+                <div class="flex-grow h-[1px] bg-gradient-to-l from-neonPurple/40 to-transparent mr-6"></div>
+                SYSTEM_ARSENAL <span class="text-neonPurple ml-4">// 05</span>
+            </h2>
+            <p class="text-right font-mono text-sm text-gray-500 mb-12 reveal">SECURITY ENGINEERING PROJECTS</p>
+
+            <!-- Featured Project Card -->
+            <div class="glass-panel border-glow-cyan rounded-xl overflow-hidden reveal group hover-target">
+                <!-- Top HUD bar -->
+                <div class="bg-electricCyan/10 border-b border-electricCyan/30 px-6 py-3 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="font-mono text-xs text-electricCyan ml-2 tracking-widest uppercase">OP_CODE: AEGIS_SOC</span>
+                    </div>
+                    <div class="font-mono text-xs text-white bg-electricCyan/20 px-2 py-1 rounded">STATUS: DEPLOYED</div>
+                </div>
+
+                <div class="p-8 grid lg:grid-cols-12 gap-8">
+                    <!-- Project Info -->
+                    <div class="lg:col-span-8 space-y-6">
+                        <h3 class="font-header text-3xl text-white group-hover:neon-text-cyan transition-all">
+                            AegisSOC: AI-Augmented Security Operations Center
+                        </h3>
+                        <p class="font-body text-lg text-gray-300 leading-relaxed">
+                            Designed and deployed a multi-tier SOC architecture integrating SIEM, IDS/IPS, Endpoint Monitoring, Threat Intelligence, Incident Response, and AI-assisted Security Automation. Built an end-to-end workflow covering detection, investigation, threat intelligence enrichment, and AI-assisted analysis.
+                        </p>
+                        
+                        <div class="space-y-3 font-body text-gray-400">
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-electricCyan mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span>Implemented centralized telemetry via <strong class="text-white font-normal">Wazuh SIEM, Windows Sysmon, Linux auditd, Suricata IDS, and Zeek</strong>.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-neonPurple mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <span>Engineered an AI alert triage framework using <strong class="text-white font-normal">Ollama, LangGraph, ChromaDB, and RAG</strong> techniques.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-neonPink mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                <span>Integrated <strong class="text-white font-normal">TheHive & MISP</strong> for case tracking and contextual threat intelligence correlation.</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-limeGreen mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                                <span>Simulated attack vectors using <strong class="text-white font-normal">Kali Linux, Metasploit, Impacket</strong> to validate detection mapped to MITRE ATT&CK.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tech Stack Side Panel -->
+                    <div class="lg:col-span-4 bg-black/40 p-6 rounded-lg border border-white/5 h-fit">
+                        <div class="font-mono text-sm text-gray-500 mb-4 border-b border-gray-800 pb-2">TECHNOLOGY STACK</div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-2 py-1 bg-electricCyan/10 text-electricCyan text-xs font-mono rounded border border-electricCyan/20">Wazuh</span>
+                            <span class="px-2 py-1 bg-electricCyan/10 text-electricCyan text-xs font-mono rounded border border-electricCyan/20">Suricata</span>
+                            <span class="px-2 py-1 bg-electricCyan/10 text-electricCyan text-xs font-mono rounded border border-electricCyan/20">Zeek</span>
+                            <span class="px-2 py-1 bg-electricCyan/10 text-electricCyan text-xs font-mono rounded border border-electricCyan/20">Velociraptor</span>
+                            <span class="px-2 py-1 bg-neonPurple/10 text-neonPurple text-xs font-mono rounded border border-neonPurple/20">Ollama</span>
+                            <span class="px-2 py-1 bg-neonPurple/10 text-neonPurple text-xs font-mono rounded border border-neonPurple/20">LangGraph</span>
+                            <span class="px-2 py-1 bg-neonPurple/10 text-neonPurple text-xs font-mono rounded border border-neonPurple/20">ChromaDB</span>
+                            <span class="px-2 py-1 bg-neonPink/10 text-neonPink text-xs font-mono rounded border border-neonPink/20">TheHive</span>
+                            <span class="px-2 py-1 bg-neonPink/10 text-neonPink text-xs font-mono rounded border border-neonPink/20">MISP</span>
+                            <span class="px-2 py-1 bg-limeGreen/10 text-limeGreen text-xs font-mono rounded border border-limeGreen/20">Streamlit</span>
+                            <span class="px-2 py-1 bg-gray-800 text-gray-300 text-xs font-mono rounded border border-gray-700">Kali Linux</span>
+                        </div>
+                        
+                        <div class="mt-8 pt-4 border-t border-gray-800">
+                             <div class="w-full flex justify-center py-2 bg-white/5 border border-white/10 text-gray-400 font-mono text-xs hover:bg-electricCyan hover:text-black cursor-pointer transition-colors rounded">
+                                 [ VIEW ARCHITECTURE DIAGRAM ]
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Contact Terminal -->
+    <section id="contact" class="relative z-10 py-24 px-6 border-t border-b border-white/5 bg-[#050816]">
+        <div class="max-w-4xl mx-auto text-center reveal">
+            <h2 class="font-header text-3xl md:text-5xl text-white mb-6 uppercase">
+                Initialize <span class="text-neonPink glitch-wrapper"><span class="glitch" data-text="Secure Uplink">Secure Uplink</span></span>
+            </h2>
+            <p class="font-body text-gray-400 mb-10 max-w-xl mx-auto">
+                Ready to fortify your digital perimeter or deploy advanced AI threat detection? Transmit a secure message to my terminal.
+            </p>
+
+            <div class="glass-panel p-1 rounded-xl max-w-2xl mx-auto bg-gradient-to-br from-electricCyan/20 via-transparent to-neonPink/20">
+                <div class="bg-bgDark p-8 rounded-lg text-left">
+                    <div class="font-mono text-xs text-electricCyan mb-6 border-b border-electricCyan/20 pb-2">
+                        root@system_node:~# ./init_contact.sh
+                    </div>
+                    
+                    <div class="space-y-6 font-mono text-sm">
+                        <div>
+                            <span class="text-gray-500">const</span> <span class="text-neonPurple">email</span> = <a href="mailto:chilakapatirakesh9@gmail.com" class="text-limeGreen hover:text-white transition-colors hover-target">"chilakapatirakesh9@gmail.com"</a>;
+                        </div>
+                        <div>
+                            <span class="text-gray-500">const</span> <span class="text-neonPurple">phone</span> = <span class="text-limeGreen">"+91 9492488866"</span>;
+                        </div>
+                        
+                        <div class="pt-6 mt-6 border-t border-white/5 flex gap-4">
+                            <a href="mailto:chilakapatirakesh9@gmail.com" class="hover-target inline-flex items-center justify-center px-6 py-3 bg-white/5 border border-white/10 hover:border-electricCyan hover:bg-electricCyan/10 text-white transition-all w-full text-center">
+                                TRANSMIT_DATA (Email)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-8 text-center bg-bgDark">
+        <p class="font-mono text-xs text-gray-600 uppercase tracking-widest">
+            // SYSTEM IDENT: RAKESH CHILAKAPATI <br>
+            // YEAR: 2099 A.D. <br>
+            DECLARATION: ALL TELEMETRY VERIFIED & TRUE.
+        </p>
     </footer>
 
-    <div class="fixed bottom-6 left-6 p-4 border border-red-500/50 bg-black/90 text-xs text-red-500 max-w-sm">
-        <p>[!] SIMULATED SOC ALERT NEUTRALIZED</p>
-        <p class="opacity-70 mt-1">Probe intercepted from 192.168.1.185. KQL rule has contained access.</p>
-    </div>
+    <script>
+        // Custom Cursor Logic
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+            
+            // Slight delay for the outline
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 150, fill: "forwards" });
+        });
 
+        // Dynamic Typing Effect (Hero Section)
+        const phrases = [
+            "AI-Augmented Security Engineer",
+            "Threat Triage Specialist",
+            "SOC Analytics Commander",
+            "Vulnerability Neutralizer"
+        ];
+        let currentPhrase = 0;
+        let letterIndex = 0;
+        let isDeleting = false;
+        const typeElement = document.getElementById("typewriter");
+
+        function type() {
+            const currentText = phrases[currentPhrase];
+            
+            if (isDeleting) {
+                typeElement.textContent = currentText.substring(0, letterIndex - 1);
+                letterIndex--;
+            } else {
+                typeElement.textContent = currentText.substring(0, letterIndex + 1);
+                letterIndex++;
+            }
+
+            let typeSpeed = isDeleting ? 30 : 70;
+
+            if (!isDeleting && letterIndex === currentText.length) {
+                typeSpeed = 2000; // Pause at end
+                isDeleting = true;
+            } else if (isDeleting && letterIndex === 0) {
+                isDeleting = false;
+                currentPhrase = (currentPhrase + 1) % phrases.length;
+                typeSpeed = 500; // Pause before new word
+            }
+
+            setTimeout(type, typeSpeed);
+        }
+        
+        // Boot Sequence Simulation
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            const progress = document.getElementById('boot-progress');
+            const bootText = document.getElementById('boot-text');
+            
+            const bootSequence = [
+                "> SECURING CONNECTION TO MAIN_FRAME...",
+                "> DECRYPTING DOSSIER DATA...",
+                "> LOADING NEURAL CAPABILITIES...",
+                "> SYSTEM READY. ACCESS GRANTED."
+            ];
+
+            let progressWidth = 0;
+            const interval = setInterval(() => {
+                progressWidth += Math.random() * 15;
+                if(progressWidth > 100) progressWidth = 100;
+                progress.style.width = `${progressWidth}%`;
+                
+                if (progressWidth > 25 && bootSequence.length === 4) addText(bootSequence[0]);
+                if (progressWidth > 50 && bootSequence.length === 3) addText(bootSequence[1]);
+                if (progressWidth > 80 && bootSequence.length === 2) addText(bootSequence[2]);
+
+                if(progressWidth === 100) {
+                    clearInterval(interval);
+                    addText(bootSequence[3]);
+                    setTimeout(() => {
+                        loader.style.opacity = "0";
+                        setTimeout(() => {
+                            loader.style.display = "none";
+                            type(); // Start typing effect after boot
+                        }, 500);
+                    }, 800);
+                }
+            }, 100);
+
+            function addText(text) {
+                const p = document.createElement('p');
+                p.textContent = text;
+                bootText.appendChild(p);
+                bootSequence.shift();
+            }
+        });
+
+        // Scroll Reveal Logic
+        const reveals = document.querySelectorAll('.reveal');
+        
+        function revealOnScroll() {
+            const windowHeight = window.innerHeight;
+            const elementVisible = 100;
+            
+            reveals.forEach((reveal) => {
+                const elementTop = reveal.getBoundingClientRect().top;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveal.classList.add('active');
+                }
+            });
+        }
+        window.addEventListener('scroll', revealOnScroll);
+        // Trigger once on load just in case
+        setTimeout(revealOnScroll, 2000);
+
+        // Ambient Background Particles (Matrix/Cyber style)
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray;
+
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+            update() {
+                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            const numberOfParticles = (canvas.width * canvas.height) / 15000; // Density
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * 0.5) - 0.25;
+                let directionY = (Math.random() * 0.5) - 0.25;
+                let color = Math.random() > 0.5 ? '#00F5FF' : '#B026FF'; // Cyan or Purple
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+            }
+        }
+
+        function animateParticles() {
+            requestAnimationFrame(animateParticles);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+            
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            // Optional: Draw connecting lines if close
+            connect();
+        }
+
+        function connect() {
+            let opacityValue = 1;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) + 
+                                   ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    if (distance < (canvas.width / 15) * (canvas.height / 15)) {
+                        opacityValue = 1 - (distance / 10000);
+                        ctx.strokeStyle = `rgba(0, 245, 255, ${opacityValue * 0.2})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+            initParticles();
+        });
+
+        initParticles();
+        animateParticles();
+
+    </script>
 </body>
 </html>
